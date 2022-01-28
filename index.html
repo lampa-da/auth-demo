@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.25.0/axios.min.js" integrity="sha512-/Q6t3CASm04EliI1QyIDAA/nDo9R8FQ/BULoUFyN4n/BDdyIxeH7u++Z+eobdmr11gG5D/6nPFyDlnisDwhpYA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  </head>
+    <body>
+      <div id='root'></div>
+      <script type='text/babel'>
+      const credentials = [
+        { username: "lucy", password: "lucy_pw" },
+        { username: "larry", password: "larry_pw" },
+        { username: "moe", password: "moe_pw" },
+      ];
+      class App extends React.Component {
+        constructor() {
+          super()
+          this.state = {
+            auth: {}
+          }
+          this.login = this.login.bind(this)
+          this.logout = this.logout.bind(this)
+          this.exchangeToken = this.exchangeToken.bind(this)
+        }
+
+        logout() {
+          window.localStorage.removeItem('token')
+          this.setState({ auth: {}})
+        }
+
+        componentDidMount(){
+          this.exchangeToken()
+        }
+        async exchangeToken() {
+        // async componentDidMount() {
+          const token = window.localStorage.getItem('token', token)
+          if(token){
+            const user =(await axios.get('/api/auth', {
+              headers: {
+                authorization: token
+              }
+            })).data
+            // console.log(user)
+            this.setState({ auth: user })
+          }
+        }
+
+        async login(credentials){
+          const {token} = (await axios.post('/api/auth', credentials)).data
+          window.localStorage.setItem('token', token)
+          this.exchangeToken()
+          // const user =(await axios.get('/api/auth', {
+          //   headers: {
+          //     authorization: token
+          //   }
+          // })).data
+          // // console.log(user)
+          // this.setState({ auth: user })
+        }
+        render() {
+          const {auth} = this.state
+          const {login, logout} = this
+          if(!auth.id){
+            return ( 
+              <div>
+                {
+                  credentials.map(credential => {
+                    return (
+                      <button onClick={()=> login(credential)} key={credential.username}>{credential.username}</button>
+                    )
+                  })
+                }
+                </div>
+            )
+          }
+          return (
+            <div>
+              Welcome {auth.username}!
+              <button onClick={logout}> Logout {auth.username}</button>
+              </div>
+          )
+        }
+      }
+        ReactDOM.render(<App />,document.querySelector('#root'))
+      </script>
+    </body>
+</html>

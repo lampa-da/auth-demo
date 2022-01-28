@@ -5,17 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "test:dev": "JWT=shh DATABASE_URL=postgres://localhost/acme_db_test npm run test -- --watch"
+    "test:dev": "JWT=shh DATABASE_URL=postgres://localhost/acme_db_test npm run test -- --watch",
+    "start:dev": "JWT=shhh nodemon server"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "chai": "^4.3.6",
-    "mocha": "^9.2.0"
+    "mocha": "^9.2.0",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.2"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "express": "^4.17.2",
     "jsonwebtoken": "^8.5.1",
     "pg": "^8.7.1",
     "sequelize": "^6.14.1"
